@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:wave/Constants/colors.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:wave/views/screens/search_screen.dart';
 
 import '../../main.dart';
 
@@ -12,7 +13,9 @@ class CustomAppbar extends StatefulWidget {
 }
 
 class _CustomAppbarState extends State<CustomAppbar> {
-  bool _isSearching = false;
+  // bool _isSearching = false;
+  // final TextEditingController _searchController = TextEditingController();
+
 
   final Color _appbarForegroundColor = Colors.black;
   final Color _appbarBackgroundColor = Colors.white;
@@ -24,50 +27,7 @@ class _CustomAppbarState extends State<CustomAppbar> {
       height: 100,
       alignment: Alignment.bottomCenter,
       color: _appbarBackgroundColor,
-      child: _isSearching
-          ? Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                IconButton(
-                  onPressed: () {
-                    setState(() {
-                      _isSearching = false;
-                    });
-                  },
-                  icon: SvgPicture.asset(
-                    'assets/icons/arrow-left.svg',
-                  ),
-                  color: Colors.transparent,
-                  highlightColor: Colors.transparent,
-                ),
-                Expanded(
-                  child: Container(
-                    padding: const EdgeInsets.only(left: 10),
-                    child: const TextField(
-                      textInputAction: TextInputAction.search,
-                      cursorColor: Colors.black,
-                      autofocus: true,
-                      style: TextStyle(color: Colors.black, fontSize: 18),
-                      decoration: InputDecoration(
-                          border: InputBorder.none,
-                          hintText: 'Search wallpapers',
-                          hintStyle:
-                              TextStyle(color: Colors.black26, fontSize: 18)),
-                    ),
-                  ),
-                ),
-                IconButton(
-                  onPressed: () {},
-                  icon: SvgPicture.asset(
-                    'assets/icons/cross.svg',
-                    width: 16,
-                  ),
-                  color: Colors.transparent,
-                  highlightColor: Colors.transparent,
-                ),
-              ],
-            )
-          : Row(
+      child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 IconButton(
@@ -89,9 +49,9 @@ class _CustomAppbarState extends State<CustomAppbar> {
                 )),
                 IconButton(
                   onPressed: () {
-                    setState(() {
-                      _isSearching = true;
-                    });
+
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => SearchScreen()));
+
                   },
                   icon: SvgPicture.asset(
                     'assets/icons/search.svg',

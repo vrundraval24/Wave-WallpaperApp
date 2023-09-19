@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:wave/controller/api.dart';
+import 'package:wave/model/photo_model.dart';
+import 'package:wave/views/screens/full_screen.dart';
 import 'package:wave/views/widgets/categories.dart';
 import 'package:wave/views/widgets/custom_appbar.dart';
 
@@ -14,6 +17,8 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+
+  // List of categories
   List list = [
     'All',
     'Nature',
@@ -30,20 +35,26 @@ class _HomeScreenState extends State<HomeScreen> {
     'Minimalistic',
   ];
 
-  List listImage = [
-    'https://images.pexels.com/photos/6899924/pexels-photo-6899924.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-    'https://images.pexels.com/photos/663487/pexels-photo-663487.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-    'https://images.pexels.com/photos/6899782/pexels-photo-6899782.jpeg?auto=compress&cs=tinysrgb&w=600',
-    'https://images.pexels.com/photos/17977593/pexels-photo-17977593/free-photo-of-young-woman-standing-on-the-meadow-stretching-her-arms-towards-rising-sun.jpeg',
-    'https://images.pexels.com/photos/818593/pexels-photo-818593.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-    'https://images.pexels.com/photos/2449600/pexels-photo-2449600.png?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-    'https://images.pexels.com/photos/11468739/pexels-photo-11468739.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-    'https://images.pexels.com/photos/8537303/pexels-photo-8537303.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-    'https://images.pexels.com/photos/3408353/pexels-photo-3408353.jpeg?auto=compress&cs=tinysrgb&w=600',
-    'https://images.pexels.com/photos/18193597/pexels-photo-18193597/free-photo-of-lying-woman-leaning-on-tree-and-holding-apple.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
+  List<PhotoModel> listImage = [];
 
+  getWallpapers() async {
+    listImage = await API.getTrendingWallpapers();
+    setState(() {
+    });
+  }
 
-  ];
+  @override
+  void initState() {
+    super.initState();
+
+    getWallpapers();
+  }
+
+  int hexToColor(String hex){
+    hex = hex.replaceFirst('#', '0xff');
+    int a = int.parse(hex);
+    return a;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -79,23 +90,33 @@ class _HomeScreenState extends State<HomeScreen> {
           Expanded(
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 10),
-              child: MasonryGridView.count(
-                physics: const BouncingScrollPhysics(),
+              child: GridView.builder(gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
                 mainAxisSpacing: 10,
                 crossAxisSpacing: 10,
+                mainAxisExtent: ((mq.width / 2) * 1200) / 800,
+              ),
+
                 itemCount: listImage.length,
                 itemBuilder: (context, index) {
-                  return Container(
-                    decoration: BoxDecoration(
-                      color: Colors.black.withAlpha(10),
-                      borderRadius: BorderRadius.circular(12)
-                    ),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(12),
-                      child: Image.network(
-                          listImage[index],
-                          fit: BoxFit.cover,
+
+                  return InkWell(
+                    onTap: () {
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => FullScreen(imgUrl: listImage[index].imageSrc, imgAvgColor: hexToColor(listImage[index].imageAvgColor),),));
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Color(hexToColor(listImage[index].imageAvgColor)),
+                        borderRadius: BorderRadius.circular(12)
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: Image.network(
+
+                            listImage[index].imageSrc,
+                            fit: BoxFit.cover,
+                            width: 100,
+                        ),
                       ),
                     ),
                   );
