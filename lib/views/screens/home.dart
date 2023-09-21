@@ -6,6 +6,7 @@ import 'package:wave/model/photo_model.dart';
 import 'package:wave/views/screens/full_screen.dart';
 import 'package:wave/views/widgets/categories.dart';
 import 'package:wave/views/widgets/custom_appbar.dart';
+import 'package:move_to_background/move_to_background.dart';
 
 import '../../main.dart';
 
@@ -17,6 +18,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  final ScrollController _scrollController = ScrollController();
 
   // List of categories
   List list = [
@@ -37,96 +39,128 @@ class _HomeScreenState extends State<HomeScreen> {
 
   List<PhotoModel> listImage = [];
 
-  getWallpapers() async {
-    listImage = await API.getTrendingWallpapers();
-    setState(() {
-    });
+  loadWallpapers(int pageNumber) async {
+    listImage = await API.loadMoreWallpapers(pageNumber);
+    setState(() {});
   }
+
+  getWallpapers() async {
+    // print("I was called");
+    listImage = await API.getTrendingWallpapers();
+    setState(() {});
+  }
+  //
+  // @override
+  // void initState() {
+  //   super.initState();
+  //
+  //   getWallpapers();
+  // }
+
+  int hexToColor(String hex) {
+    hex = hex.replaceFirst('#', '0xff');
+    int a = int.parse(hex);
+    return a;
+  }
+
+  int pageNumber = 1;
 
   @override
   void initState() {
     super.initState();
 
-    getWallpapers();
-  }
+    _scrollController.addListener(() {
+      if (_scrollController.position.pixels >
+          _scrollController.position.maxScrollExtent - 700) {
+        pageNumber += 1;
+        // print(pageNumber);
+        loadWallpapers(pageNumber);
+        // getWallpapers();
+      }
+    });
 
-  int hexToColor(String hex){
-    hex = hex.replaceFirst('#', '0xff');
-    int a = int.parse(hex);
-    return a;
+    getWallpapers();
   }
 
   @override
   Widget build(BuildContext context) {
     mq = MediaQuery.of(context).size;
 
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        flexibleSpace: const CustomAppbar(),
-      ),
-      body: Column(
-        children: [
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-            height: 50,
-            width: mq.width,
-            child: ListView.builder(
-              itemBuilder: (context, index) {
-                return index == 0
-                    ? Categories(
-                        categoryName: list[index],
-                        isSelected: true,
-                      )
-                    : Categories(
-                        categoryName: list[index],
-                        isSelected: false,
-                      );
-              },
-              itemCount: list.length,
-              scrollDirection: Axis.horizontal,
-            ),
-          ),
-          Expanded(
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              child: GridView.builder(gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                mainAxisSpacing: 10,
-                crossAxisSpacing: 10,
-                mainAxisExtent: ((mq.width / 2) * 1200) / 800,
-              ),
-
-                itemCount: listImage.length,
+    return WillPopScope(
+      onWillPop: () async {
+        MoveToBackground.moveTaskToBack();
+        return false;
+      },
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        appBar: AppBar(
+          flexibleSpace: const CustomAppbar(),
+        ),
+        body: Column(
+          children: [
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+              height: 50,
+              width: mq.width,
+              child: ListView.builder(
                 itemBuilder: (context, index) {
+                  return index == 0
+                      ? Categories(
+                          categoryName: list[index],
+                          isSelected: true,
+                        )
+                      : Categories(
+                          categoryName: list[index],
+                          isSelected: false,
+                        );
+                },
+                itemCount: list.length,
+                scrollDirection: Axis.horizontal,
+              ),
+            ),
+            Expanded(
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                child: GridView.builder(
+                  controller: _scrollController,
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  mainAxisSpacing: 10,
+                  crossAxisSpacing: 10,
+                  mainAxisExtent: ((mq.width / 2) * 1200) / 800,
+                ),
 
-                  return InkWell(
-                    onTap: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => FullScreen(imgUrl: listImage[index].imageSrc, imgAvgColor: hexToColor(listImage[index].imageAvgColor),),));
-                    },
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Color(hexToColor(listImage[index].imageAvgColor)),
-                        borderRadius: BorderRadius.circular(12)
-                      ),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(12),
-                        child: Image.network(
+                  itemCount: listImage.length,
+                  itemBuilder: (context, index) {
 
-                            listImage[index].imageSrc,
-                            fit: BoxFit.cover,
-                            width: 100,
+                    return InkWell(
+                      onTap: () {
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => FullScreen(imgUrl: listImage[index].highQualityFullScreenImages, imgAvgColor: hexToColor(listImage[index].imageAvgColor),),));
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Color(hexToColor(listImage[index].imageAvgColor)),
+                          borderRadius: BorderRadius.circular(12)
+                        ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(12),
+                          child: Image.network(
+
+                              listImage[index].imageSrc,
+                              fit: BoxFit.cover,
+                              width: 100,
+                          ),
                         ),
                       ),
-                    ),
-                  );
-                },
+                    );
+                  },
+                ),
+
+
               ),
-
-
             ),
-          )
-        ],
+          ],
+        ),
       ),
     );
   }

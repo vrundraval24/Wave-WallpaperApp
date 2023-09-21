@@ -25,7 +25,7 @@ class _SearchScreenState extends State<SearchScreen> {
       // Update the UI with the search results
     });
 
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       _scrollController.jumpTo(0);
     });
   }
@@ -95,7 +95,7 @@ class _SearchScreenState extends State<SearchScreen> {
                           context,
                           MaterialPageRoute(
                             builder: (context) => FullScreen(
-                              imgUrl: searchedWallpapers[index].imageSrc,
+                              imgUrl: searchedWallpapers[index].highQualityFullScreenImages,
                               imgAvgColor: hexToColor(
                                   searchedWallpapers[index].imageAvgColor),
                             ),
