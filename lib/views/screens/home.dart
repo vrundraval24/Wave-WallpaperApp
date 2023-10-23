@@ -124,39 +124,44 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: GridView.builder(
                   controller: _scrollController,
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  mainAxisSpacing: 10,
-                  crossAxisSpacing: 10,
-                  mainAxisExtent: ((mq.width / 2) * 1200) / 800,
-                ),
-
+                    crossAxisCount: 2,
+                    mainAxisSpacing: 10,
+                    crossAxisSpacing: 10,
+                    mainAxisExtent: ((mq.width / 2) * 1200) / 800,
+                  ),
                   itemCount: listImage.length,
                   itemBuilder: (context, index) {
-
                     return InkWell(
                       onTap: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => FullScreen(imgUrl: listImage[index].highQualityFullScreenImages, imgAvgColor: hexToColor(listImage[index].imageAvgColor),),));
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => FullScreen(
+                                imgUrl: listImage[index]
+                                    .highQualityFullScreenImages,
+                                imgAvgColor:
+                                    hexToColor(listImage[index].imageAvgColor),
+                                imgWidth: listImage[index].imgWidth, imgHeight: listImage[index].imgHeight,
+                              ),
+                            ));
                       },
                       child: Container(
                         decoration: BoxDecoration(
-                          color: Color(hexToColor(listImage[index].imageAvgColor)),
-                          borderRadius: BorderRadius.circular(12)
-                        ),
+                            color: Color(
+                                hexToColor(listImage[index].imageAvgColor)),
+                            borderRadius: BorderRadius.circular(12)),
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(12),
                           child: Image.network(
-
-                              listImage[index].imageSrc,
-                              fit: BoxFit.cover,
-                              width: 100,
+                            listImage[index].imageSrc,
+                            fit: BoxFit.cover,
+                            width: 100,
                           ),
                         ),
                       ),
                     );
                   },
                 ),
-
-
               ),
             ),
           ],

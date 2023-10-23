@@ -97,7 +97,7 @@ class _SearchScreenState extends State<SearchScreen> {
                             builder: (context) => FullScreen(
                               imgUrl: searchedWallpapers[index].highQualityFullScreenImages,
                               imgAvgColor: hexToColor(
-                                  searchedWallpapers[index].imageAvgColor),
+                                  searchedWallpapers[index].imageAvgColor), imgWidth: searchedWallpapers[index].imgWidth, imgHeight: searchedWallpapers[index].imgHeight,
                             ),
                           ));
                     },
