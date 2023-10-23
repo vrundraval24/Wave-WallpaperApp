@@ -121,7 +121,6 @@ class _FullScreenState extends State<FullScreen> {
 
   late bool isDownloaded;
 
-
   downloadImage() async {
     setState(() {
       loading = true;
@@ -141,25 +140,28 @@ class _FullScreenState extends State<FullScreen> {
       loading = false;
     });
 
-    ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: isDownloaded ? Text("Image downloaded.", style: TextStyle(fontSize: 16):Text("Downloading failed.", style: TextStyle(fontSize: 16),),
-          backgroundColor: Colors.black12,
-          elevation: 0,
-          duration: Duration(seconds: 2),
-
-        )
-    ): ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Downloading failed.", style: TextStyle(fontSize: 16),),
-          backgroundColor: Colors.black12,
-          elevation: 0,
-          duration: Duration(seconds: 2),
-
-        ));
-
-
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: isDownloaded
+          ? const Text(
+              "Image downloaded.",
+              style: TextStyle(fontSize: 16),
+            )
+          : const Text(
+              "Downloading failed.",
+              style: TextStyle(fontSize: 16),
+            ),
+      backgroundColor: Colors.black12,
+      elevation: 0,
+      duration: const Duration(seconds: 2),
+    ));
+    // : ScaffoldMessenger.of(context).showSnackBar(
+    //     const SnackBar(content: Text("Downloading failed.", style: TextStyle(fontSize: 16),),
+    //       backgroundColor: Colors.black12,
+    //       elevation: 0,
+    //       duration: Duration(seconds: 2),
+    //
+    //     ));
   }
-
-
 
   // old - working
   Future<void> setWallpaper() async {
@@ -213,60 +215,45 @@ class _FullScreenState extends State<FullScreen> {
                 ),
               ),
             ),
-            Positioned(
-              bottom: 50,
-              width: 200,
-              left: mq.width / 2 - 100,
-              height: 50,
-              child: Row(
-                children: [
-                  ElevatedButton(
-                    onPressed: () {
-                      // screenshotController
-                      //     .capture(delay: const Duration(milliseconds: 10))
-                      //     .then((capturedImage) async {
-                      //   ShowCapturedWidget(context, capturedImage!);
-                      // }).catchError((onError) {
-                      //   print(onError);
-                      // });
-
-                      // screenshotController
-                      //     .capture(delay: const Duration(milliseconds: 10))
-                      //     .then((capturedImage) {
-                      //   _saveNetworkImage(capturedImage!);
-                      // }).catchError((onError) {
-                      //   print(onError);
-                      // });
-
-                      setWallpaper();
-                    },
-                    style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.black12,
-                        surfaceTintColor: Colors.transparent,
-                        shadowColor: Colors.transparent,
-                        foregroundColor: Colors.transparent),
-                    child: const Text(
-                      'Set wallpaper',
-                      style: TextStyle(color: Colors.white, fontSize: 18),
-                    ),
-                  ),
-                  IconButton(
+            Padding(
+              padding: const EdgeInsets.only(bottom: 20),
+              child: Align(
+                alignment: Alignment.bottomCenter,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    ElevatedButton(
                       onPressed: () {
-                        downloadImage();
-                        // ScaffoldMessenger.of(context).showSnackBar(
-                        //    const SnackBar(content: Text("Image downloaded.", style: TextStyle(fontSize: 16),),
-                        //     backgroundColor: Colors.black12,
-                        //     elevation: 0,
-                        //     duration: Duration(seconds: 2),
-                        //
-                        //   )
-                        // );
+                        // screenshotController
+                        //     .capture(delay: const Duration(milliseconds: 10))
+                        //     .then((capturedImage) async {
+                        //   ShowCapturedWidget(context, capturedImage!);
+                        // }).catchError((onError) {
+                        //   print(onError);
+                        // });
+
+                        // screenshotController
+                        //     .capture(delay: const Duration(milliseconds: 10))
+                        //     .then((capturedImage) {
+                        //   _saveNetworkImage(capturedImage!);
+                        // }).catchError((onError) {
+                        //   print(onError);
+                        // });
+
+                        setWallpaper();
                       },
-                      icon: const Icon(Icons.download),
-                      color: Colors.white,
-                      style:
-                          IconButton.styleFrom(backgroundColor: Colors.black12)),
-                ],
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.black12,
+                          surfaceTintColor: Colors.transparent,
+                          shadowColor: Colors.transparent,
+                          foregroundColor: Colors.transparent),
+                      child: const Text(
+                        'Set wallpaper',
+                        style: TextStyle(color: Colors.white, fontSize: 18),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
 
@@ -322,7 +309,7 @@ class _FullScreenState extends State<FullScreen> {
   Future<bool> _saveFile(File image) async {
     final result = await ImageGallerySaver.saveFile(image.path);
     print("result: ${result['isSuccess']}");
-    
+
     return result['isSuccess'];
   }
 
