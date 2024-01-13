@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_wallpaper_manager/flutter_wallpaper_manager.dart';
+import 'package:image_cropper/image_cropper.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:wave/views/widgets/custom_fullscreen_appbar.dart';
@@ -172,10 +173,33 @@ class _FullScreenState extends State<FullScreen> {
     try {
       int location = WallpaperManager.BOTH_SCREEN;
       var file = await DefaultCacheManager().getSingleFile(widget.imgUrl);
-      bool result =
-          await WallpaperManager.setWallpaperFromFile(file.path, location);
 
-      print("Wallpaper set $result");
+      var croppedImage = await ImageCropper().cropImage(
+        sourcePath: file.path,
+        aspectRatio: CropAspectRatio(ratioX: mq.width, ratioY: mq.height),
+
+        uiSettings: [
+          AndroidUiSettings(
+            // toolbarColor: Colors.pink,
+            // statusBarColor: Colors.blue,
+            // toolbarWidgetColor: Colors.yellow,
+            // activeControlsWidgetColor: Colors.deepPurpleAccent,
+            // backgroundColor: Colors.amber,
+            // dimmedLayerColor: Colors.pink,
+            hideBottomControls: true,
+            statusBarColor: Colors.black,
+            toolbarTitle: 'Crop Wallpaper'
+
+          ),
+        ]
+      );
+
+      if (croppedImage != null) {
+        bool result = await WallpaperManager.setWallpaperFromFile(
+            croppedImage.path, location);
+
+        print("Wallpaper set $result");
+      }
     } on PlatformException {
       print('Failed to get wallpaper.');
     }

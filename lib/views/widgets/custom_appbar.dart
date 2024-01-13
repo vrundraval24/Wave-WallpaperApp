@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:wave/Constants/colors.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:wave/views/screens/search_screen.dart';
 
-import '../../main.dart';
 
 class CustomAppbar extends StatefulWidget {
   const CustomAppbar({super.key});
@@ -17,7 +15,6 @@ class _CustomAppbarState extends State<CustomAppbar> {
   // final TextEditingController _searchController = TextEditingController();
 
 
-  final Color _appbarForegroundColor = Colors.black;
   final Color _appbarBackgroundColor = Colors.white;
 
   @override
@@ -50,7 +47,7 @@ class _CustomAppbarState extends State<CustomAppbar> {
                 IconButton(
                   onPressed: () {
 
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => SearchScreen()));
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => const SearchScreen()));
 
                   },
                   icon: SvgPicture.asset(

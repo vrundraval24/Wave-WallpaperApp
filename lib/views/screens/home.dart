@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:wave/controller/api.dart';
 import 'package:wave/model/photo_model.dart';
 import 'package:wave/views/screens/full_screen.dart';
@@ -25,7 +23,6 @@ class _HomeScreenState extends State<HomeScreen> {
     'All',
     'Nature',
     'Gaming',
-    'K-Drama',
     'Anime',
     'Aesthetic',
     'Korean',
