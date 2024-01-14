@@ -7,15 +7,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_wallpaper_manager/flutter_wallpaper_manager.dart';
-import 'package:image_cropper/image_cropper.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:wave/views/widgets/custom_fullscreen_appbar.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
-import 'package:device_info_plus/device_info_plus.dart';
 
-import 'package:percent_indicator/percent_indicator.dart';
 
 import '../../main.dart';
 
@@ -37,7 +32,7 @@ class FullScreen extends StatefulWidget {
 }
 
 class _FullScreenState extends State<FullScreen> {
-  late Uint8List _imageFile;
+  // late Uint8List _imageFile;
 
   //Create an instance of ScreenshotController
   ScreenshotController screenshotController = ScreenshotController();
@@ -171,37 +166,53 @@ class _FullScreenState extends State<FullScreen> {
     });
 
     try {
+
       int location = WallpaperManager.BOTH_SCREEN;
-      var file = await DefaultCacheManager().getSingleFile(widget.imgUrl);
 
-      var croppedImage = await ImageCropper().cropImage(
-        sourcePath: file.path,
-        aspectRatio: CropAspectRatio(ratioX: mq.width, ratioY: mq.height),
 
-        uiSettings: [
-          AndroidUiSettings(
-            // toolbarColor: Colors.pink,
-            // statusBarColor: Colors.blue,
-            // toolbarWidgetColor: Colors.yellow,
-            // activeControlsWidgetColor: Colors.deepPurpleAccent,
-            // backgroundColor: Colors.amber,
-            // dimmedLayerColor: Colors.pink,
-            hideBottomControls: true,
-            statusBarColor: Colors.black,
-            toolbarTitle: 'Crop Wallpaper'
 
-          ),
-        ]
-      );
+      final ss = await screenshotController.capture();
 
-      if (croppedImage != null) {
-        bool result = await WallpaperManager.setWallpaperFromFile(
-            croppedImage.path, location);
+      if(ss != null){
 
-        print("Wallpaper set $result");
+        final file = await DefaultCacheManager().putFile('url', ss);
+
+        final result = await WallpaperManager.setWallpaperFromFile(
+            file.path, location);
+
+        log("Wallpaper set $result");
+
       }
+
+      // var file = await DefaultCacheManager().getSingleFile(widget.imgUrl);
+      //
+      //
+      // var croppedImage = await ImageCropper().cropImage(
+      //   sourcePath: file.path,
+      //   aspectRatio: CropAspectRatio(ratioX: mq.width, ratioY: mq.height),
+      //
+      //   uiSettings: [
+      //     AndroidUiSettings(
+      //
+      //       hideBottomControls: true,
+      //       statusBarColor: Colors.black,
+      //       toolbarTitle: 'Crop Wallpaper'
+      //
+      //     ),
+      //   ]
+      // );
+      //
+      //
+      // if (croppedImage != null) {
+      //   bool result = await WallpaperManager.setWallpaperFromFile(
+      //       croppedImage.path, location);
+      //
+      //   print("Wallpaper set $result");
+      // }
+
+
     } on PlatformException {
-      print('Failed to get wallpaper.');
+      log('Failed to get wallpaper.');
     }
 
     setState(() {
@@ -221,97 +232,115 @@ class _FullScreenState extends State<FullScreen> {
         backgroundColor: Colors.transparent,
         flexibleSpace: const CustomFullScreenAppbar(),
       ),
-      body: Screenshot(
-        controller: screenshotController,
-        child: Stack(
-          children: [
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Container(
-                width: (mq.height * widget.imgWidth) / widget.imgHeight,
-                height: mq.height,
-                decoration: BoxDecoration(
-                  color: Color(widget.imgAvgColor),
-                  image: DecorationImage(
-                    image: NetworkImage(widget.imgUrl),
-                    fit: BoxFit.fitHeight,
+      body: Stack(
+        children: [
+          Screenshot(
+            controller: screenshotController,
+            child: Container(
+              width: mq.width,
+              color: Colors.red,
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Container(
+                  width: (mq.height * widget.imgWidth) / widget.imgHeight,
+                  height: mq.height,
+                  decoration: BoxDecoration(
+                    color: Color(widget.imgAvgColor),
+                    image: DecorationImage(
+                      image: NetworkImage(widget.imgUrl),
+                      fit: BoxFit.fitHeight,
+                    ),
                   ),
                 ),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.only(bottom: 20),
-              child: Align(
-                alignment: Alignment.bottomCenter,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    ElevatedButton(
-                      onPressed: () {
-                        // screenshotController
-                        //     .capture(delay: const Duration(milliseconds: 10))
-                        //     .then((capturedImage) async {
-                        //   ShowCapturedWidget(context, capturedImage!);
-                        // }).catchError((onError) {
-                        //   print(onError);
-                        // });
+          ),
+          Padding(
+            padding: const EdgeInsets.only(bottom: 20),
+            child: Align(
+              alignment: Alignment.bottomCenter,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ElevatedButton(
+                    onPressed: () async {
+                      // screenshotController
+                      //     .capture(delay: const Duration(milliseconds: 10))
+                      //     .then((capturedImage) async {
+                      //   DefaultCacheManager().putFile('ggf', capturedImage!);
+                      //   DefaultCacheManager().
+                      //   ShowCapturedWidget(context, capturedImage);
+                      // }).catchError((onError) {
+                      //   print(onError);
+                      // });
 
-                        // screenshotController
-                        //     .capture(delay: const Duration(milliseconds: 10))
-                        //     .then((capturedImage) {
-                        //   _saveNetworkImage(capturedImage!);
-                        // }).catchError((onError) {
-                        //   print(onError);
-                        // });
 
-                        setWallpaper();
-                      },
-                      style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.black12,
-                          surfaceTintColor: Colors.transparent,
-                          shadowColor: Colors.transparent,
-                          foregroundColor: Colors.transparent),
-                      child: const Text(
-                        'Set wallpaper',
-                        style: TextStyle(color: Colors.white, fontSize: 18),
-                      ),
+
+                      // DefaultCacheManager().getFileFromMemory('key');
+                      //
+                      //
+                      //
+
+
+
+
+
+
+                      // screenshotController
+                      //     .capture(delay: const Duration(milliseconds: 10))
+                      //     .then((capturedImage) {
+                      //   _saveNetworkImage(capturedImage!);
+                      // }).catchError((onError) {
+                      //   print(onError);
+                      // });
+
+                      setWallpaper();
+                    },
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.black12,
+                        surfaceTintColor: Colors.transparent,
+                        shadowColor: Colors.transparent,
+                        foregroundColor: Colors.transparent),
+                    child: const Text(
+                      'Set wallpaper',
+                      style: TextStyle(color: Colors.white, fontSize: 18),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
+          ),
 
-            // Positioned(
-            //   bottom: 100,
-            //   width: 200,
-            //   left: mq.width / 2 - 100,
-            //   height: 50,
-            //   child: ElevatedButton(
-            //     onPressed: () {
-            //       // downloadFile();
-            //     },
-            //     style: ElevatedButton.styleFrom(
-            //         backgroundColor: Colors.black12,
-            //         surfaceTintColor: Colors.transparent,
-            //         shadowColor: Colors.transparent,
-            //         foregroundColor: Colors.transparent),
-            //     child: const Text(
-            //       'Download',
-            //       style: TextStyle(color: Colors.white, fontSize: 18),
-            //     ),
-            //   ),
-            // ),
+          // Positioned(
+          //   bottom: 100,
+          //   width: 200,
+          //   left: mq.width / 2 - 100,
+          //   height: 50,
+          //   child: ElevatedButton(
+          //     onPressed: () {
+          //       // downloadFile();
+          //     },
+          //     style: ElevatedButton.styleFrom(
+          //         backgroundColor: Colors.black12,
+          //         surfaceTintColor: Colors.transparent,
+          //         shadowColor: Colors.transparent,
+          //         foregroundColor: Colors.transparent),
+          //     child: const Text(
+          //       'Download',
+          //       style: TextStyle(color: Colors.white, fontSize: 18),
+          //     ),
+          //   ),
+          // ),
 
-            loading
-                ? const Center(
-                    child: CircularProgressIndicator(
-                      color: Colors.white,
-                      backgroundColor: Colors.black12,
-                    ),
-                  )
-                : Container(),
-          ],
-        ),
+          loading
+              ? const Center(
+                  child: CircularProgressIndicator(
+                    color: Colors.white,
+                    backgroundColor: Colors.black12,
+                  ),
+                )
+              : Container(),
+        ],
       ),
     );
   }
