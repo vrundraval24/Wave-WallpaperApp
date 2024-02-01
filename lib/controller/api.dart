@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
+import 'package:wave/Constants/secrets/keys.dart';
 import 'package:wave/model/photo_model.dart';
 
 class API{
@@ -15,7 +16,7 @@ class API{
 
     await http.get(
         Uri.parse('https://api.pexels.com/v1/curated?per_page=$_numberOfPages'),
-        headers: {'Authorization' : "qfF1bjGMnWkhc961EsNe9VxrQrMMEMwcZhzQYvF0rZIVuoanxbOwNf7k"},
+        headers: {'Authorization' : SecretKeys.authorizationKey},
     ).then((value) {
       Map<String, dynamic> jsonData = jsonDecode(value.body);
 
