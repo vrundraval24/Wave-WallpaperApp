@@ -38,7 +38,7 @@ class API{
 
     await http.get(
       Uri.parse("https://api.pexels.com/v1/search?query=$query&per_page=30&page=1"),
-      headers: {'Authorization' : "qfF1bjGMnWkhc961EsNe9VxrQrMMEMwcZhzQYvF0rZIVuoanxbOwNf7k"},
+      headers: {'Authorization' : SecretKeys.authorizationKey},
     ).then((value) {
       Map<String, dynamic> jsonData = jsonDecode(value.body);
 
@@ -61,7 +61,7 @@ class API{
 
     await http.get(
       Uri.parse('https://api.pexels.com/v1/curated?per_page=$_numberOfPages&page=$pageNumber'),
-      headers: {'Authorization' : "qfF1bjGMnWkhc961EsNe9VxrQrMMEMwcZhzQYvF0rZIVuoanxbOwNf7k"},
+      headers: {'Authorization' : SecretKeys.authorizationKey},
     ).then((value) {
       Map<String, dynamic> jsonData = jsonDecode(value.body);
 
@@ -83,7 +83,7 @@ class API{
 
     await http.get(
       Uri.parse("https://api.pexels.com/v1/search?query=$query&per_page=30&page=1"),
-      headers: {'Authorization' : "qfF1bjGMnWkhc961EsNe9VxrQrMMEMwcZhzQYvF0rZIVuoanxbOwNf7k"},
+      headers: {'Authorization' : SecretKeys.authorizationKey},
     ).then((value) {
       Map<String, dynamic> jsonData = jsonDecode(value.body);
 
